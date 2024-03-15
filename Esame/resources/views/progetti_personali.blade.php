@@ -77,28 +77,21 @@
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addActivityModal{{$value->id}}">
                     Aggiungi Attività
                 </button>
-                 <!-- Delete Activity Dropdown -->
-                 <form id="delAtt" action="/progetti-personali/{{$value->id}}/attivita/{{ old('attivita_id') }}" method="POST" class="d-inline">
-                    @csrf
-                    @method('DELETE')
-                    <select name="attivita_id" id="attivita_id" class="form-select" {{ $value->attivitas->isEmpty() ? 'disabled' : '' }}>
-                        <option selected>Scegli un'attività...</option>
-                        @foreach($value->attivitas as $attivita)
-                            <option value="{{ $attivita->id }}">{{ $attivita->nome }}</option>
-                        @endforeach
-                    </select>
-                    <button type="submit" class="btn btn-danger" {{ $value->attivitas->isEmpty() ? 'disabled' : '' }}>Elimina</button>
-                </form>
+              <!-- Delete Activity Dropdown -->
+              <form id="delAtt{{$value->id}}" action="/progetti-personali/{{$value->id}}/attivita/{{ old('attivita_id') }}" method="POST" class="d-inline" data-progetto-id="{{$value->id}}">
+    @csrf
+    @method('DELETE')
+    <select name="attivita_id" class="form-select attivita-select" {{ $value->attivitas->isEmpty() ? 'disabled' : '' }}>
+        <option selected>Scegli un'attività...</option>
+        @foreach($value->attivitas as $attivita)
+            <option value="{{ $attivita->id }}">{{ $attivita->nome }}</option>
+        @endforeach
+    </select>
+    <button type="submit" class="btn btn-danger" {{ $value->attivitas->isEmpty() ? 'disabled' : '' }}>Elimina</button>
+</form>
+
             </td>
         </tr>
-
-        @endforeach
-        @endif
-    </tbody>
-</table>
-                </div>
-            </div>
-        </div>
     <!-- Add Activity Modal -->
     <div class="modal fade" id="addActivityModal{{$value->id}}" tabindex="-1" aria-labelledby="addActivityModalLabel" aria-hidden="true">
                   <div class="modal-dialog">
@@ -172,15 +165,24 @@
           </div>
         </div>
     </div>
+        @endforeach
+        @endif
+    </tbody>
+</table>
+                </div>
+            </div>
+        </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    let select = document.getElementById('attivita_id');
-    select.addEventListener('change', function() {
-        let id = this.value;
-        let form = document.querySelector('#delAtt');
-        form.action = '/progetti-personali/{{$value->id}}/attivita/' + id;
+        <script>
+document.addEventListener('DOMContentLoaded', function() {
+    let selects = document.querySelectorAll('.attivita-select');
+    selects.forEach(function(select) {
+        select.addEventListener('change', function() {
+            let id = this.value;
+            let form = this.closest('form');
+            form.action = '/progetti-personali/' + form.dataset.progettoId + '/attivita/' + id;
+        });
     });
 });
-    </script>
+</script>
 </x-app-layout>
